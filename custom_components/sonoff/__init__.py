@@ -855,6 +855,11 @@ class SonoffDevice(Entity):
         if 'rssi' in device['params']:
             self._attributes['rssi'] = device['params']['rssi']
 
+        # Diffuser (TODO: map RGB into lightcolor, lightbright<->brightness, state<->mode, sledOnline<->status_led)
+        for key in ('water', 'lightmode', 'lightbright', 'lightRcolor', 'lightGcolor', 'lightBcolor', 'state', 'sledOnline'):
+            if key in device['params']:
+                self._attributes[key] = device['params'][key]
+
         # the device has more switches
         if self._outlet is not None:
             return device['params']['switches'][self._outlet]['switch'] == 'on' if device else False
@@ -910,3 +915,11 @@ class SonoffDevice(Entity):
     def device_state_attributes(self):
         """Return device specific state attributes."""
         return self._attributes
+
+    @property
+    def device_info(self):
+        return {
+            'identifiers': ('sonoff', self._deviceid),
+            'name': self._name,
+            'manufacturer': 'Sonoff',
+        }
